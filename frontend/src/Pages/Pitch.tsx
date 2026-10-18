@@ -5,16 +5,14 @@ import { Mp3Encoder } from '@breezystack/lamejs'
 import { useAudio } from '../AudioContext'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
 
-// Takılma olursa 4096 / 8192 / 16384 değerlerini dene
+
 const BUFFER_SIZE = 16384
 
-// Yavaşlatmada kekelemeyi azaltan stretch ayarı (private alan, hata verirse geçer)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tuneStretch = (st: any, sampleRate: number) => {
     try { st.stretch.setParameters(sampleRate, 40, 15, 12) } catch { /* sürümde yoksa sorun değil */ }
 }
 
-// Ses grafiği: her piksel sütununda o aralığın en yüksek genliği çizilir
 const Waveform = ({ buffer, progress }: { buffer: AudioBuffer | null; progress: number }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -118,7 +116,7 @@ const Pitch = () => {
             setPlaying(false)
         } else {
             await ctx.resume()
-            shifter.percentagePlayed = 0 // her seferinde baştan
+            shifter.percentagePlayed = 0 
             setProgress(0)
             shifter.connect(ctx.destination)
             setPlaying(true)
@@ -130,10 +128,9 @@ const Pitch = () => {
         shifterRef.current?.disconnect()
         setPlaying(false)
         setExporting(true)
-        await new Promise((r) => setTimeout(r)) // buton yazısı güncellensin
+        await new Promise((r) => setTimeout(r)) 
 
         try {
-            // Çalmadan baştan sona işle, işlenen her parçayı hemen MP3'e çevir
             const st = new SoundTouch()
             st.tempo = speed
             st.pitchSemitones = semitones
@@ -157,7 +154,7 @@ const Pitch = () => {
                 }
                 const out = encoder.encodeBuffer(left.subarray(0, frames), right.subarray(0, frames))
                 if (out.length) mp3.push(out)
-                if (n++ % 50 === 0) await new Promise((r) => setTimeout(r)) // arayüz donmasın
+                if (n++ % 50 === 0) await new Promise((r) => setTimeout(r))
             }
             mp3.push(encoder.flush())
 

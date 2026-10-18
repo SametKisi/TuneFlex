@@ -20,7 +20,7 @@ const Home = () => {
             return
         }
         setAudioFile(file)
-        navigate('/pitch')                 // sayfaya yönlendir
+        navigate('/pitch')
     }
         return (
         <div className="min-h-screen md:h-screen w-full overflow-x-hidden bg-[radial-gradient(ellipse_at_top_right,#2a2623_0%,#0d0c0b_60%)]">
