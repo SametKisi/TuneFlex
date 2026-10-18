@@ -2,26 +2,28 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { PitchShifter, SoundTouch, SimpleFilter, WebAudioBufferSource } from 'soundtouchjs'
 import { Mp3Encoder } from '@breezystack/lamejs'
-import { useAudio } from '../AudioContext.jsx'
+import { useAudio } from '../AudioContext'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
 
 // Takılma olursa 4096 / 8192 / 16384 değerlerini dene
 const BUFFER_SIZE = 16384
 
 // Yavaşlatmada kekelemeyi azaltan stretch ayarı (private alan, hata verirse geçer)
-const tuneStretch = (st, sampleRate) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const tuneStretch = (st: any, sampleRate: number) => {
     try { st.stretch.setParameters(sampleRate, 40, 15, 12) } catch { /* sürümde yoksa sorun değil */ }
 }
 
 // Ses grafiği: her piksel sütununda o aralığın en yüksek genliği çizilir
-const Waveform = ({ buffer, progress }) => {
-    const canvasRef = useRef(null)
+const Waveform = ({ buffer, progress }: { buffer: AudioBuffer | null; progress: number }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
         const canvas = canvasRef.current
         if (!buffer || !canvas) return
-        const { width, height } = canvas
         const ctx = canvas.getContext('2d')
+        if (!ctx) return
+        const { width, height } = canvas
         const data = buffer.getChannelData(0)
         const step = Math.floor(data.length / width)
 
@@ -51,9 +53,10 @@ const Waveform = ({ buffer, progress }) => {
 
 const Pitch = () => {
     const { audioFile } = useAudio()
-    const ctxRef = useRef(null)
-    const shifterRef = useRef(null)
-    const [buffer, setBuffer] = useState(null)
+    const ctxRef = useRef<AudioContext | null>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const shifterRef = useRef<any>(null)
+    const [buffer, setBuffer] = useState<AudioBuffer | null>(null)
     const [ready, setReady] = useState(false)
     const [playing, setPlaying] = useState(false)
     const [exporting, setExporting] = useState(false)
@@ -74,7 +77,7 @@ const Pitch = () => {
 
                 const shifter = new PitchShifter(ctx, decoded, BUFFER_SIZE)
                 tuneStretch(shifter._soundtouch, ctx.sampleRate)
-                shifter.on('play', (e) => {
+                shifter.on('play', (e: { percentagePlayed: number; timePlayed: number }) => {
                     setProgress(e.percentagePlayed)
                     if (e.timePlayed >= shifter.duration - 0.05) {
                         shifter.disconnect()
@@ -108,21 +111,22 @@ const Pitch = () => {
 
     const toggle = async () => {
         const shifter = shifterRef.current
-        if (!shifter || !ready) return
+        const ctx = ctxRef.current
+        if (!shifter || !ctx || !ready) return
         if (playing) {
             shifter.disconnect()
             setPlaying(false)
         } else {
-            await ctxRef.current.resume()
+            await ctx.resume()
             shifter.percentagePlayed = 0 // her seferinde baştan
             setProgress(0)
-            shifter.connect(ctxRef.current.destination)
+            shifter.connect(ctx.destination)
             setPlaying(true)
         }
     }
 
     const download = async () => {
-        if (!buffer || exporting) return
+        if (!buffer || !audioFile || exporting) return
         shifterRef.current?.disconnect()
         setPlaying(false)
         setExporting(true)
@@ -137,25 +141,27 @@ const Pitch = () => {
             const filter = new SimpleFilter(new WebAudioBufferSource(buffer), st)
 
             const encoder = new Mp3Encoder(2, buffer.sampleRate, 192)
-            const mp3 = []
+            const mp3: Uint8Array[] = []
             const CHUNK = 9216
             const pcm = new Float32Array(CHUNK * 2)
             const left = new Int16Array(CHUNK)
             const right = new Int16Array(CHUNK)
-            const toInt16 = (x) => Math.max(-1, Math.min(1, x)) * 32767
+            const toInt16 = (x: number) => Math.max(-1, Math.min(1, x)) * 32767
 
-            for (let n = 0, frames; (frames = filter.extract(pcm, CHUNK)) > 0; n++) {
+            let n = 0
+            let frames: number
+            while ((frames = filter.extract(pcm, CHUNK)) > 0) {
                 for (let i = 0; i < frames; i++) {
                     left[i] = toInt16(pcm[i * 2])
                     right[i] = toInt16(pcm[i * 2 + 1])
                 }
                 const out = encoder.encodeBuffer(left.subarray(0, frames), right.subarray(0, frames))
                 if (out.length) mp3.push(out)
-                if (n % 50 === 0) await new Promise((r) => setTimeout(r)) // arayüz donmasın
+                if (n++ % 50 === 0) await new Promise((r) => setTimeout(r)) // arayüz donmasın
             }
             mp3.push(encoder.flush())
 
-            const url = URL.createObjectURL(new Blob(mp3, { type: 'audio/mpeg' }))
+            const url = URL.createObjectURL(new Blob(mp3 as BlobPart[], { type: 'audio/mpeg' }))
             const a = document.createElement('a')
             a.href = url
             a.download = `${audioFile.name.replace(/\.[^.]+$/, '')}-pitch.mp3`

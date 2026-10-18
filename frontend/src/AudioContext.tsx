@@ -1,15 +1,24 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react'
 
-const AudioCtx = createContext(null);
+type AudioContextType = {
+  audioFile: File | null
+  setAudioFile: React.Dispatch<React.SetStateAction<File | null>>
+}
 
-export function AudioProvider({ children }) {
-  const [audioFile, setAudioFile] = useState(null);
+const AudioCtx = createContext<AudioContextType | undefined>(undefined)
+
+export function AudioProvider({ children }: { children: ReactNode }) {
+  const [audioFile, setAudioFile] = useState<File | null>(null)
 
   return (
     <AudioCtx.Provider value={{ audioFile, setAudioFile }}>
       {children}
     </AudioCtx.Provider>
-  );
+  )
 }
 
-export const useAudio = () => useContext(AudioCtx);
+export const useAudio = () => {
+  const ctx = useContext(AudioCtx)
+  if (!ctx) throw new Error('useAudio must be used inside AudioProvider')
+  return ctx
+}

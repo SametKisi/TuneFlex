@@ -1,16 +1,16 @@
 import { ArrowRightIcon, CloudArrowUpIcon, LightningIcon, MusicNotesIcon, SlidersHorizontalIcon, UploadSimpleIcon } from '@phosphor-icons/react'
 import MainPage from '../component/MainPage.jsx'
-import { useRef } from 'react';
-import { useAudio } from '../AudioContext.jsx'
+import { useRef } from 'react'
+import { useAudio } from '../AudioContext'
 import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null)
     const { setAudioFile } = useAudio()
     const navigate = useNavigate()
 
-    const handleChange = (e) => {
-        const file = e.target.files[0]
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
         if (!file) return
 
         const isMp3 =
@@ -22,7 +22,6 @@ const Home = () => {
         setAudioFile(file)
         navigate('/pitch')                 // sayfaya yönlendir
     }
-
     return (
         <div className="h-screen w-full bg-[radial-gradient(ellipse_at_top_right,#2a2623_0%,#0d0c0b_60%)]">
             <div className='w-full h-fit flex flex-1 items-start justify-center text-[#F3E4C9] gap-6 p-4'>
@@ -68,7 +67,7 @@ const Home = () => {
                         />
                         <button
                             type="button"
-                            onClick={() => inputRef.current.click()}
+                            onClick={() => inputRef.current?.click()}
                             className='flex flex-1 text-black justify-center items-center bg-[#947c6b] rounded-full w-fit h-fit p-3 px-5 gap-3 cursor-pointer font-semibold hover:bg-[#836c5b] transition-all'>
                             <UploadSimpleIcon className='size-5' />
                             <div>Ses Yükle</div>
