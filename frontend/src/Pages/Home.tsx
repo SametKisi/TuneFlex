@@ -22,9 +22,9 @@ const Home = () => {
         setAudioFile(file)
         navigate('/pitch')                 // sayfaya yönlendir
     }
-    return (
-        <div className="h-screen w-full bg-[radial-gradient(ellipse_at_top_right,#2a2623_0%,#0d0c0b_60%)]">
-            <div className='w-full h-fit flex flex-1 items-start justify-center text-[#F3E4C9] gap-6 p-4'>
+        return (
+        <div className="min-h-screen md:h-screen w-full overflow-x-hidden bg-[radial-gradient(ellipse_at_top_right,#2a2623_0%,#0d0c0b_60%)]">
+            <div className='w-full h-fit flex flex-1 items-start justify-center text-[#F3E4C9] gap-3 md:gap-6 p-4 text-sm md:text-base'>
                 <div className='text-xl font-bold flex flex-1'>
                     TuneFlex
                 </div>
@@ -38,12 +38,12 @@ const Home = () => {
                     İletişim
                 </div>
             </div>
-            <div className='flex flex-1'>
-                <div className='flex flex-col h-fit w-fit p-9 gap-3'>
-                    <div className='font-semibold text-gray-200 bg-[#302A26] rounded-full w-fit p-3 px-4'>
+            <div className='flex flex-col md:flex-row flex-1'>
+                <div className='flex flex-col h-fit w-full md:w-fit p-5 md:p-9 gap-3'>
+                    <div className='font-semibold text-gray-200 bg-[#302A26] rounded-full w-fit md:w-full p-3 px-4 text-sm md:text-base'>
                         Tonu değiştir. Yeni Şarkılar Oluştur
                     </div>
-                    <div className='font-serif text-gray-200 text-4xl items-center p-2'>
+                    <div className='font-serif text-gray-200 text-3xl md:text-4xl items-center p-2'>
                         <div>
                             Senin Müziğin,
                         </div>
@@ -51,7 +51,7 @@ const Home = () => {
                             <div>
                                 Senin tonun
                             </div>
-                            <div className='w-100 text-lg'>
+                            <div className='w-full md:w-100 text-base md:text-lg'>
                                 Ses dosyalarınızın perdesini kolayca ve hızla ayarlayın.
                                 Yeni atmosferler yaratın, farklı tonlar keşfedin ve müziğinizi tamamen kendinize özgü kılın.
                             </div>
@@ -78,10 +78,10 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-                <MainPage className="flex ml-auto justify-end items-end" />
+                <MainPage className="hidden md:flex ml-auto justify-end items-end md:w-fit" />
             </div>
 
-            <div className='flex flex-1 w-full p-4 bg-[#232323] h-fit gap-10 items-center justify-center '>
+            <div className='grid grid-cols-2 md:flex flex-1 w-full p-2 md:p-4 bg-[#232323] h-fit gap-2 md:gap-10 items-start md:items-center justify-items-center md:justify-center'>
                 <div className='flex flex-col max-w-80 p-4'>
                     <div className='gap-2 flex flex-col'>
                         <div className='bg-[#373636] rounded-full p-2 w-fit'>
@@ -105,7 +105,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className='text-[#f3e4c9a1]'>
-                        Tonu hassasiyetle ayarlayın ve gerçek zamanlı dinleyin.
+                        Tonu hassasiyetle ayarlayın ve gerçek zamanlı dinleyin.
                     </div>
                 </div>
                 <div className='flex flex-col max-w-80 p-4'>
