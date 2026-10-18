@@ -10,7 +10,7 @@ const BUFFER_SIZE = 16384
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tuneStretch = (st: any, sampleRate: number) => {
-    try { st.stretch.setParameters(sampleRate, 40, 15, 12) } catch { /* sürümde yoksa sorun değil */ }
+    try { st.stretch.setParameters(sampleRate, 40, 15, 12) } catch {}
 }
 
 const Waveform = ({ buffer, progress }: { buffer: AudioBuffer | null; progress: number }) => {
