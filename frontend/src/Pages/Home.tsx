@@ -13,12 +13,6 @@ const Home = () => {
         const file = e.target.files?.[0]
         if (!file) return
 
-        const isMp3 =
-            file.type === 'audio/mpeg' || file.name.toLowerCase().endsWith('.mp3')
-        if (!isMp3) {
-            alert('Lütfen bir MP3 dosyası seçin.')
-            return
-        }
         setAudioFile(file)
         navigate('/pitch')
     }
